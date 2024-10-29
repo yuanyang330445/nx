@@ -9,7 +9,11 @@ import { tmpdir } from 'tmp';
 import { prompt } from 'enquirer';
 import { output } from '../../utils/output';
 import * as createSpinner from 'ora';
-import { detectPlugins, installPlugins } from '../init/init-v2';
+import {
+  detectPlugins,
+  installPlugins,
+  runPackageManagerInstallPlugins,
+} from '../init/init-v2';
 import { readNxJson } from '../../config/nx-json';
 import { workspaceRoot } from '../../utils/workspace-root';
 import {
@@ -283,17 +287,33 @@ export async function importHandler(options: ImportOptions) {
   // If install fails, we should continue since the errors could be resolved later.
   let installFailed = false;
   if (plugins.length > 0) {
+    output.log({ title: 'Installing Plugins' });
     try {
-      output.log({ title: 'Installing Plugins' });
-      installPlugins(workspaceRoot, plugins, pmc, updatePackageScripts);
-
-      await destinationGitClient.amendCommit();
+      runPackageManagerInstallPlugins(workspaceRoot, pmc, plugins);
     } catch (e) {
       installFailed = true;
       output.error({
         title: `Install failed: ${e.message || 'Unknown error'}`,
-        bodyLines: [e.stack],
+        bodyLines: [
+          'The following plugins were not installed:',
+          ...plugins.map((p) => `- ${p}`),
+          'Run commands to install the plugins:',
+          ...plugins.map((p) => '- ' + chalk.bold(pmc.exec + ' nx add ' + p)),
+          'Please check the error below for more details.',
+          e.stack,
+        ],
       });
+    }
+    if (!installFailed) {
+      const { succeededPlugins } = installPlugins(
+        workspaceRoot,
+        plugins,
+        pmc,
+        updatePackageScripts
+      );
+      if (succeededPlugins.length > 0) {
+        await destinationGitClient.amendCommit();
+      }
     }
   } else if (await needsInstall(packageManager, originalPackageWorkspaces)) {
     try {
