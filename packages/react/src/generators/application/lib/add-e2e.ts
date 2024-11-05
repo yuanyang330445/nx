@@ -1,11 +1,14 @@
-import type { GeneratorCallback, Tree } from '@nx/devkit';
 import {
   addProjectConfiguration,
   ensurePackage,
+  GeneratorCallback,
   getPackageManagerCommand,
   joinPathFragments,
   readNxJson,
+  Tree,
+  updateJson,
 } from '@nx/devkit';
+import { posix } from 'node:path';
 import { webStaticServeGenerator } from '@nx/web';
 
 import { nxVersion } from '../../../utils/versions';
@@ -15,6 +18,7 @@ import { NormalizedSchema } from '../schema';
 import { findPluginForConfigFile } from '@nx/devkit/src/utils/find-plugin-for-config-file';
 import { addE2eCiTargetDefaults } from '@nx/devkit/src/generators/target-defaults-utils';
 import { E2EWebServerDetails } from '@nx/devkit/src/generators/e2e-web-server-info-utils';
+import { isUsingTsSolutionSetup } from '@nx/js/src/utils/typescript/ts-solution-setup';
 
 export async function addE2e(
   tree: Tree,
@@ -111,6 +115,8 @@ export async function addE2e(
         ciBaseUrl: e2eWebServerInfo.e2eCiBaseUrl,
       });
 
+      updateTsconfig(tree, options);
+
       if (
         options.addPlugin ||
         readNxJson(tree).plugins?.find((p) =>
@@ -176,6 +182,8 @@ export async function addE2e(
         addPlugin: options.addPlugin,
       });
 
+      updateTsconfig(tree, options);
+
       if (
         options.addPlugin ||
         readNxJson(tree).plugins?.find((p) =>
@@ -216,5 +224,24 @@ export async function addE2e(
     case 'none':
     default:
       return () => {};
+  }
+}
+
+function updateTsconfig(tree: Tree, options: NormalizedSchema) {
+  if (!isUsingTsSolutionSetup(tree)) return;
+
+  const tsconfigPath = joinPathFragments(
+    options.e2eProjectRoot,
+    'tsconfig.json'
+  );
+
+  if (tree.exists(tsconfigPath)) {
+    updateJson(tree, tsconfigPath, (json) => {
+      json.references ??= [];
+      json.references.push({
+        path: posix.relative(options.e2eProjectRoot, options.appProjectRoot),
+      });
+      return json;
+    });
   }
 }
