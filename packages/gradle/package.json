@@ -26,6 +26,7 @@
   "generators": "./generators.json",
   "exports": {
     ".": "./index.js",
+    "./plugin": "./plugin.js",
     "./package.json": "./package.json",
     "./migrations.json": "./migrations.json",
     "./generators.json": "./generators.json"

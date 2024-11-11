@@ -29,6 +29,10 @@ import {
   needsInstall,
 } from './utils/needs-install';
 import { readPackageJson } from '../../project-graph/file-utils';
+import {
+  checkCompatibleWithPlugins,
+  updatePluginsInNxJson,
+} from './utils/check-compatible-with-plugins';
 
 const importRemoteName = '__tmp_nx_import__';
 
@@ -282,6 +286,17 @@ export async function importHandler(options: ImportOptions) {
 
   // If install fails, we should continue since the errors could be resolved later.
   let installFailed = false;
+  if (nxJson.plugins?.length > 0) {
+    // Check compatibility with existing plugins for the workspace included new imported projects
+    const imcompatiblePlugins = await checkCompatibleWithPlugins(
+      nxJson.plugins,
+      workspaceRoot
+    );
+    if (Object.keys(imcompatiblePlugins).length > 0) {
+      updatePluginsInNxJson(workspaceRoot, imcompatiblePlugins);
+      await destinationGitClient.amendCommit();
+    }
+  }
   if (plugins.length > 0) {
     try {
       output.log({ title: 'Installing Plugins' });
@@ -294,6 +309,15 @@ export async function importHandler(options: ImportOptions) {
         title: `Install failed: ${e.message || 'Unknown error'}`,
         bodyLines: [e.stack],
       });
+    }
+    // Check compatibility with new plugins for the workspace included new imported projects
+    const imcompatiblePlugins = await checkCompatibleWithPlugins(
+      plugins.map((plugin) => plugin + '/plugin'), // plugins contains package name, but we need plugin name
+      workspaceRoot
+    );
+    if (Object.keys(imcompatiblePlugins).length > 0) {
+      updatePluginsInNxJson(workspaceRoot, imcompatiblePlugins);
+      await destinationGitClient.amendCommit();
     }
   } else if (await needsInstall(packageManager, originalPackageWorkspaces)) {
     try {
