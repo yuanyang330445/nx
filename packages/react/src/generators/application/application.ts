@@ -47,7 +47,7 @@ import { logShowProjectCommand } from '@nx/devkit/src/utils/log-show-project-com
 import { setupTailwindGenerator } from '../setup-tailwind/setup-tailwind';
 import { useFlatConfig } from '@nx/eslint/src/utils/flat-config';
 import { addProjectRootToRspackPluginExcludesIfExists } from './lib/add-project-root-to-rspack-plugin-excludes';
-import { updateTsconfigFiles } from '../../utils/ts-solution';
+import { updateTsconfigFiles } from '@nx/js/src/utils/typescript/ts-solution-setup';
 
 async function addLinting(host: Tree, options: NormalizedSchema) {
   const tasks: GeneratorCallback[] = [];
@@ -372,7 +372,11 @@ export async function applicationGeneratorInternal(
     logShowProjectCommand(options.projectName);
   });
 
-  updateTsconfigFiles(host, options.appProjectRoot, 'tsconfig.app.json');
+  updateTsconfigFiles(host, options.appProjectRoot, 'tsconfig.app.json', {
+    jsx: 'react-jsx',
+    module: 'esnext',
+    moduleResolution: 'bundler',
+  });
 
   return runTasksInSerial(...tasks);
 }
