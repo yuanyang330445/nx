@@ -19,16 +19,11 @@ import {
   runTasksInSerial,
   stripIndents,
   Tree,
-  updateJson,
   updateNxJson,
 } from '@nx/devkit';
 import reactInitGenerator from '../init/init';
 import { Linter, lintProjectGenerator } from '@nx/eslint';
-import {
-  babelLoaderVersion,
-  nxRspackVersion,
-  nxVersion,
-} from '../../utils/versions';
+import { babelLoaderVersion, nxVersion } from '../../utils/versions';
 import { maybeJs } from '../../utils/maybe-js';
 import { installCommonDependencies } from './lib/install-common-dependencies';
 import { extractTsConfigBase } from '../../utils/create-ts-config';
@@ -229,10 +224,7 @@ export async function applicationGeneratorInternal(
       false
     );
   } else if (options.bundler === 'rspack') {
-    const { configurationGenerator } = ensurePackage(
-      '@nx/rspack',
-      nxRspackVersion
-    );
+    const { configurationGenerator } = ensurePackage('@nx/rspack', nxVersion);
     const rspackTask = await configurationGenerator(host, {
       project: options.projectName,
       main: joinPathFragments(
