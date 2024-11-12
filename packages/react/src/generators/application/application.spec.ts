@@ -1443,7 +1443,7 @@ describe('app', () => {
               "@nx/react/typings/image.d.ts",
             ],
           },
-          "extends": "./tsconfig.json",
+          "extends": "../tsconfig.base.json",
           "include": [
             "vite.config.ts",
             "vite.config.mts",
