@@ -17,7 +17,7 @@
     "@types/react-dom": "<%= typesReactDomVersion %>",
     "eslint": "<%= eslintVersion %>",
     "typescript": "<%= typescriptVersion %>",
-    "vite": "<%= viteVersion %>",
+    "vite": "<%= viteVersion %>"
   },
   "engines": {
     "node": ">=20"
