@@ -22,5 +22,9 @@
   "engines": {
     "node": ">=20"
   },
-  "sideEffects": false
+  "sideEffects": false<% if (isUsingTsSolution) { %>,
+  "nx": {
+    "name": "<%= name %>"
+  }
+  <% } %>
 }
