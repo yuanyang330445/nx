@@ -1350,7 +1350,7 @@ describe('app', () => {
       await applicationGenerator(appTree, {
         directory: 'myapp',
         addPlugin: true,
-        linter: Linter.None,
+        linter: Linter.EsLint,
         style: 'none',
         bundler: 'vite',
         unitTestRunner: 'vitest',
@@ -1403,6 +1403,7 @@ describe('app', () => {
             ],
           },
           "exclude": [
+            "dist",
             "src/**/*.spec.ts",
             "src/**/*.test.ts",
             "src/**/*.spec.tsx",
@@ -1475,6 +1476,10 @@ describe('app', () => {
             "sourceMap": false,
             "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
           },
+          "exclude": [
+            "dist",
+            "eslint.config.js",
+          ],
           "extends": "../tsconfig.base.json",
           "include": [
             "**/*.ts",
