@@ -1433,7 +1433,7 @@ describe('app', () => {
             "jsx": "react-jsx",
             "module": "esnext",
             "moduleResolution": "bundler",
-            "outDir": "../dist/out-tsc",
+            "outDir": "./out-tsc/vitest",
             "types": [
               "vitest/globals",
               "vitest/importMeta",
