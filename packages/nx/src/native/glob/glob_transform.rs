@@ -159,26 +159,26 @@ mod test {
         let no_dirs = convert_glob("dist/**/!(README|LICENSE).(js|ts)").unwrap();
         assert_eq!(
             no_dirs,
-            ["!dist/**/{README,LICENSE}.{js,ts}", "dist/**/*.{js,ts}",]
+            ["!dist/**/{README,LICENSE}.{js,ts}", "dist/**/*.{js,ts}", ]
         );
     }
 
     #[test]
     fn convert_globs_no_files() {
         let no_files = convert_glob("dist/!(cache|cache2)/**/*.(js|ts)").unwrap();
-        assert_eq!(no_files, ["!dist/{cache,cache2}/", "dist/*/**/*.{js,ts}",]);
+        assert_eq!(no_files, ["!dist/{cache,cache2}/", "dist/*/**/*.{js,ts}", ]);
     }
 
     #[test]
     fn convert_globs_no_extensions() {
         let no_extensions = convert_glob("dist/!(cache|cache2)/**/*.js").unwrap();
-        assert_eq!(no_extensions, ["!dist/{cache,cache2}/", "dist/*/**/*.js",]);
+        assert_eq!(no_extensions, ["!dist/{cache,cache2}/", "dist/*/**/*.js", ]);
     }
 
     #[test]
     fn convert_globs_no_patterns() {
         let no_patterns = convert_glob("dist/**/*.js").unwrap();
-        assert_eq!(no_patterns, ["dist/**/*.js",]);
+        assert_eq!(no_patterns, ["dist/**/*.js", ]);
     }
 
     #[test]
@@ -268,7 +268,7 @@ mod test {
         let (leading_dirs, globs) =
             super::partition_glob("dist/app/**/!(README|LICENSE).(js|ts)").unwrap();
         assert_eq!(leading_dirs, "dist/app");
-        assert_eq!(globs, ["!**/{README,LICENSE}.{js,ts}", "**/*.{js,ts}",]);
+        assert_eq!(globs, ["!**/{README,LICENSE}.{js,ts}", "**/*.{js,ts}", ]);
     }
 
     #[test]

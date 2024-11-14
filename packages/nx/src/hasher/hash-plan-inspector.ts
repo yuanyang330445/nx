@@ -8,7 +8,6 @@ import {
 import { readNxJson } from '../config/nx-json';
 import { transformProjectGraphForRust } from '../native/transform-objects';
 import { ProjectGraph } from '../config/project-graph';
-import { retrieveWorkspaceFiles } from '../project-graph/utils/retrieve-workspace-files';
 import { workspaceRoot } from '../utils/workspace-root';
 import { createProjectRootMappings } from '../project-graph/utils/find-project-for-path';
 import { createTaskGraph } from '../tasks-runner/create-task-graph';
@@ -16,7 +15,7 @@ import type { Target } from '../command-line/run/run';
 import { getNxWorkspaceFilesFromContext } from '../utils/workspace-context';
 
 export class HashPlanInspector {
-  private projectGraphRef: ExternalObject<NativeProjectGraph>;
+  private readonly projectGraphRef: ExternalObject<NativeProjectGraph>;
   private planner: HashPlanner;
   private inspector: NativeHashPlanInspector;
 
