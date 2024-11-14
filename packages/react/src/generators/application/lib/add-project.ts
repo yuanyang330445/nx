@@ -30,7 +30,7 @@ export function addProject(host: Tree, options: NormalizedSchema) {
     }
   }
 
-  if (isUsingTsSolutionSetup(host)) {
+  if (options.isUsingTsSolutionConfig) {
     writeJson(host, joinPathFragments(options.appProjectRoot, 'package.json'), {
       name: getImportPath(host, options.name),
       version: '0.0.1',
@@ -39,7 +39,9 @@ export function addProject(host: Tree, options: NormalizedSchema) {
         name: options.name,
       },
     });
-  } else {
+  }
+
+  if (!options.isUsingTsSolutionConfig || options.alwaysGenerateProjectJson) {
     addProjectConfiguration(host, options.projectName, {
       ...project,
     });
