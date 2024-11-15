@@ -1,4 +1,7 @@
 import * as yargs from 'yargs';
+import * as enquirer from 'enquirer';
+import * as chalk from 'chalk';
+
 import { MessageKey, messages } from '../utils/nx/ab-testing';
 import { output } from '../utils/output';
 import { deduceDefaultBase } from '../utils/git/default-base';
@@ -8,14 +11,15 @@ import {
   packageManagerList,
 } from '../utils/package-manager';
 import { stringifyCollection } from '../utils/string-utils';
-import enquirer = require('enquirer');
 import { NxCloud } from '../utils/nx/nx-cloud';
-import chalk = require('chalk');
+import { isCI } from '../utils/ci/is-ci';
 
 export async function determineNxCloud(
   parsedArgs: yargs.Arguments<{ nxCloud: NxCloud }>
 ): Promise<NxCloud> {
-  if (parsedArgs.nxCloud === undefined) {
+  if (!parsedArgs.interactive || isCI()) {
+    return 'skip';
+  } else if (parsedArgs.nxCloud === undefined) {
     return nxCloudPrompt('setupCI');
   } else {
     return parsedArgs.nxCloud;
@@ -80,6 +84,7 @@ export async function determineDefaultBase(
           message: `Main branch name`,
           initial: `main`,
           type: 'input',
+          skip: !parsedArgs.interactive || isCI(),
         },
       ])
       .then((a) => {
@@ -130,6 +135,7 @@ export async function determinePackageManager(
             { name: 'pnpm', message: 'PNPM' },
             { name: 'bun', message: 'Bun' },
           ],
+          skip: !parsedArgs.interactive || isCI(),
         },
       ])
       .then((a) => a.packageManager);
