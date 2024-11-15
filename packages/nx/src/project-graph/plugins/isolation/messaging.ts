@@ -81,7 +81,7 @@ export interface PluginCreateDependenciesResult {
   type: 'createDependenciesResult';
   payload:
     | {
-        dependencies: ReturnType<LoadedNxPlugin['createDependencies']>;
+        dependencies: Awaited<ReturnType<LoadedNxPlugin['createDependencies']>>;
         success: true;
         tx: string;
       }
@@ -96,7 +96,7 @@ export interface PluginCreateMetadataResult {
   type: 'createMetadataResult';
   payload:
     | {
-        metadata: ReturnType<LoadedNxPlugin['createMetadata']>;
+        metadata: Awaited<ReturnType<LoadedNxPlugin['createMetadata']>>;
         success: true;
         tx: string;
       }
