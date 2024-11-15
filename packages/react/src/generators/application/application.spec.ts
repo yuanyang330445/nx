@@ -1492,6 +1492,7 @@ describe('app', () => {
             "src/**/*.test.js",
             "src/**/*.d.ts",
           ],
+          "references": [],
         }
       `);
     });
